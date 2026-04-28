@@ -1,5 +1,4 @@
 import { ResponsiveStream, TooltipProps } from "@nivo/stream";
-import { format as d3Format } from "d3-format";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {  type OrdinalColorScaleConfig } from "@nivo/colors";
 import * as React from "react";
