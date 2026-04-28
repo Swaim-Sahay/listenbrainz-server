@@ -127,9 +127,17 @@ describe("LinkListensPage", () => {
 
     const prevButton = screen.getByText("Previous", { exact: false });
     await user.click(prevButton);
-    await screen.findByText("Paharda (Remixes)", { exact: false });
-    expect(
-      screen.queryByText("Broadchurch (Music From The Original TV Series)")
-    ).toBeNull();
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(textContentMatcher("Paharda (Remixes)"), { exact: false })
+      ).toBeInTheDocument();
+
+      expect(
+        screen.queryByText("Broadchurch (Music From The Original TV Series)")
+      ).toBeNull();
+    });
   });
 });
+
+
