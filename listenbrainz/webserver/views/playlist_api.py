@@ -892,7 +892,7 @@ def export_playlist(playlist_mbid, service):
         raise APIBadRequest(f"Service {service} is not linked. Please link your {service} account first.")
 
     if service == 'spotify' and not SPOTIFY_PLAYLIST_PERMISSIONS.issubset(set(token["scopes"])):
-        missing_scopes = ", ".join(SPOTIFY_PLAYLIST_PERMISSIONS)
+        missing_scopes = ", ".join(SPOTIFY_PLAYLIST_PERMISSIONS - set(token["scopes"]))
         raise APIBadRequest(f"Missing scopes {missing_scopes} to manage playlists."
                             f" Please relink your {service} account from ListenBrainz settings with appropriate scopes"
                             f" to use this feature.")
@@ -946,7 +946,7 @@ def import_playlist_from_music_service(service):
         raise APIBadRequest("Not authorized to Apple Music. Please link your account first.")
 
     if service == "spotify" and not SPOTIFY_PLAYLIST_PERMISSIONS.issubset(set(token["scopes"])):
-        missing_scopes = ", ".join(SPOTIFY_PLAYLIST_PERMISSIONS)
+        missing_scopes = ", ".join(SPOTIFY_PLAYLIST_PERMISSIONS - set(token["scopes"]))
         raise APIBadRequest(f"Missing scopes {missing_scopes} to manage playlists."
                             f" Please relink your {service} account from ListenBrainz settings with appropriate scopes"
                             f" to use this feature.")
@@ -997,7 +997,7 @@ def import_tracks_from_spotify_playlist(playlist_id):
         raise APIBadRequest(f"Service Spotify is not linked. Please link your Spotify account first.")
 
     if not SPOTIFY_PLAYLIST_PERMISSIONS.issubset(set(token["scopes"])):
-        missing_scopes = ", ".join(SPOTIFY_PLAYLIST_PERMISSIONS)
+        missing_scopes = ", ".join(SPOTIFY_PLAYLIST_PERMISSIONS - set(token["scopes"]))
         raise APIBadRequest(f"Missing scopes {missing_scopes} to manage playlists."
                             f" Please relink your Spotify account from ListenBrainz settings with appropriate scopes"
                             f" to use this feature.")
@@ -1109,7 +1109,8 @@ def export_playlist_jspf(service):
         raise APIBadRequest(f"Service {service} is not linked. Please link your {service} account first.")
 
     if service == 'spotify' and not SPOTIFY_PLAYLIST_PERMISSIONS.issubset(set(token["scopes"])):
-        raise APIBadRequest(f"Missing scopes playlist-modify-public and playlist-modify-private to export playlists."
+        missing_scopes = ", ".join(SPOTIFY_PLAYLIST_PERMISSIONS - set(token["scopes"]))
+        raise APIBadRequest(f"Missing scopes {missing_scopes} to manage playlists."
                             f" Please relink your {service} account from ListenBrainz settings with appropriate scopes"
                             f" to use this feature.")
 
