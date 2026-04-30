@@ -891,11 +891,15 @@ def export_playlist(playlist_mbid, service):
     if not token:
         raise APIBadRequest(f"Service {service} is not linked. Please link your {service} account first.")
 
-    if service == 'spotify' and not SPOTIFY_PLAYLIST_PERMISSIONS.issubset(set(token["scopes"])):
-        missing_scopes = ", ".join(SPOTIFY_PLAYLIST_PERMISSIONS - set(token["scopes"]))
-        raise APIBadRequest(f"Missing scopes {missing_scopes} to manage playlists."
-                            f" Please relink your {service} account from ListenBrainz settings with appropriate scopes"
-                            f" to use this feature.")
+    if service == "spotify":
+        export_permissions = {"playlist-modify-public", "playlist-modify-private"}
+        if not export_permissions.issubset(set(token["scopes"])):
+            missing_scopes = " and ".join(sorted(export_permissions - set(token["scopes"]), reverse=True))
+            raise APIBadRequest(
+                f"Missing scopes {missing_scopes} to export playlists."
+                " Please relink your spotify account from ListenBrainz settings with appropriate scopes"
+                " to use this feature."
+            )
 
     is_public = parse_boolean_arg("is_public", True)
     try:
