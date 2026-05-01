@@ -3,7 +3,7 @@ import * as React from "react";
 import { HttpResponse, http } from "msw";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SetupServerApi, setupServer } from "msw/node";
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, waitForElementToBeRemoved } from "@testing-library/react";
 import { RouterProvider, createMemoryRouter } from "react-router";
 import userEvent from "@testing-library/user-event";
 import * as missingDataProps from "../../__mocks__/missingMBDataProps.json";
@@ -128,15 +128,15 @@ describe("LinkListensPage", () => {
     const prevButton = screen.getByText("Previous", { exact: false });
     await user.click(prevButton);
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(textContentMatcher("Paharda (Remixes)"), { exact: false })
-      ).toBeInTheDocument();
-
-      expect(
-        screen.queryByText("Broadchurch (Music From The Original TV Series)")
-      ).toBeNull();
+    // Wait until we're back on page 1 (Paharda appears again)
+    await screen.findByText(textContentMatcher("Paharda (Remixes)"), {
+      exact: false,
     });
+
+    // And ensure the page-2-only item is gone
+    await waitForElementToBeRemoved(() =>
+      screen.queryByText("Broadchurch (Music From The Original TV Series)")
+    );
   });
 });
 
